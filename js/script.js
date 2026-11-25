@@ -9,13 +9,13 @@ function loadUser(user) {
     document.getElementById("first-letter").textContent =
         username.charAt(0).toUpperCase();
 
-    document.getElementById("welcome-username").textContent = username;
+    document.getElementById("welcome-username").textContent = username.charAt(0).toUpperCase()+username.slice(1);
     document.getElementById("username").textContent = username;
 }
 
 // Temporary user for testing.
 // Later, Firebase or Supabase will provide this information.
-loadUser({ username: "Reyna" });
+loadUser({ username: "Sreehari" });
 
 
 // 2. GREETING

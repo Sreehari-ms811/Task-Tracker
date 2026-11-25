@@ -39,41 +39,7 @@ document.getElementById("time-of-day").textContent = greeting;
 
 
 // 3. SAMPLE TASKS
-let tasks = [
-    {
-        id: 1,
-        title: "Complete Mathematics",
-        description: "Finish differentiation exercises",
-        priority: "High",
-        status: "Pending",
-        dueDate: "2026-11-25"
-    },
-    {
-        id: 2,
-        title: "Project Development",
-        description: "Work on TaskFlow dashboard",
-        priority: "High",
-        status: "Pending",
-        dueDate: "2026-11-26"
-    },
-    {
-        id: 3,
-        title: "Physics Revision",
-        description: "Revise unit 2 topics",
-        priority: "Medium",
-        status: "Completed",
-        dueDate: "2026-11-23"
-    },
-    {
-        id: 4,
-        title: "JavaScript Practice",
-        description: "Practice arrays and functions",
-        priority: "Low",
-        status: "Pending",
-        dueDate: "2026-11-27"
-    }
-];
-
+let task=[]
 
 // 4. GET TASK STATUS
 function getStatus(task) {

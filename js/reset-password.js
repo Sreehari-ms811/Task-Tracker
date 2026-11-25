@@ -3,15 +3,12 @@ import { supabase } from "./supabase.js";
 
 console.log("TVA Password Reset connected!");
 
-
 // ==========================================
 // ELEMENTS
 // ==========================================
 
 const resetForm = document.getElementById("reset-form");
-
 const statusMessage = document.getElementById("status-message");
-
 const resetMessage = document.getElementById("reset-message");
 
 const submitButton = resetForm.querySelector('button[type="submit"]');
@@ -20,7 +17,7 @@ let recoverySessionReady = false;
 
 
 // ==========================================
-// 1. VERIFY PASSWORD RESET SESSION
+// 1. RECOVERY SESSION
 // ==========================================
 
 function showResetForm() {
@@ -30,14 +27,11 @@ function showResetForm() {
     resetForm.hidden = false;
 
     statusMessage.textContent =
-        "Reset link verified. You can now create a new password.";
+        "Reset link verified. Create your new password.";
 
 }
 
-
 function showInvalidLink() {
-
-    if (recoverySessionReady) return;
 
     statusMessage.textContent =
         "This password reset link is invalid or has expired. Please request a new one.";
@@ -45,7 +39,7 @@ function showInvalidLink() {
 }
 
 
-// Listen for Supabase password recovery event
+// Listen for Supabase authentication events
 
 const { data: authListener } = supabase.auth.onAuthStateChange(
     (event, session) => {
@@ -60,7 +54,7 @@ const { data: authListener } = supabase.auth.onAuthStateChange(
 );
 
 
-// Check the existing session after Supabase initializes
+// Check existing session
 
 async function checkRecoverySession() {
 
@@ -70,19 +64,7 @@ async function checkRecoverySession() {
 
         if (error) throw error;
 
-        const url = new URL(window.location.href);
-
-        const hasRecoveryCode = url.searchParams.has("code");
-
-        const hashParams = new URLSearchParams(
-            url.hash.substring(1)
-        );
-
-        const isRecoveryLink =
-            hashParams.get("type") === "recovery" ||
-            (hasRecoveryCode && !!data.session);
-
-        if (data.session && isRecoveryLink) {
+        if (data.session) {
 
             showResetForm();
 
@@ -94,7 +76,7 @@ async function checkRecoverySession() {
 
     } catch (error) {
 
-        console.error("Recovery session error:", error);
+        console.error(error);
 
         showInvalidLink();
 
@@ -115,25 +97,13 @@ toggleButtons.forEach((button) => {
 
     button.addEventListener("click", () => {
 
-        const targetId = button.dataset.target;
-
-        const input = document.getElementById(targetId);
+        const input = document.getElementById(button.dataset.target);
 
         const isHidden = input.type === "password";
 
         input.type = isHidden ? "text" : "password";
 
         button.textContent = isHidden ? "Hide" : "Show";
-
-        button.setAttribute(
-            "aria-label",
-            isHidden ? "Hide password" : "Show password"
-        );
-
-        button.setAttribute(
-            "aria-pressed",
-            String(isHidden)
-        );
 
     });
 
@@ -151,7 +121,7 @@ resetForm.addEventListener("submit", async (event) => {
     if (!recoverySessionReady) {
 
         resetMessage.textContent =
-            "Your recovery session is not valid. Request a new reset link.";
+            "Please request a new password reset link.";
 
         return;
 
@@ -164,8 +134,6 @@ resetForm.addEventListener("submit", async (event) => {
         document.getElementById("confirm-password").value;
 
 
-    // Check password length
-
     if (newPassword.length < 8) {
 
         resetMessage.textContent =
@@ -176,12 +144,10 @@ resetForm.addEventListener("submit", async (event) => {
     }
 
 
-    // Check password confirmation
-
     if (newPassword !== confirmPassword) {
 
         resetMessage.textContent =
-            "Passwords do not match. Please try again.";
+            "Passwords do not match.";
 
         return;
 
@@ -206,21 +172,18 @@ resetForm.addEventListener("submit", async (event) => {
         if (error) throw error;
 
 
-        // Password successfully updated
-
         resetMessage.textContent =
-            "Password updated successfully! You can now log in.";
-
-        resetForm.reset();
+            "Password updated successfully! Redirecting to login...";
 
         resetForm.hidden = true;
 
-        recoverySessionReady = false;
-
-
-        // End recovery session
-
         await supabase.auth.signOut();
+
+        setTimeout(() => {
+
+            window.location.href = "index.html";
+
+        }, 2000);
 
 
     } catch (error) {

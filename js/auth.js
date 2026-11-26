@@ -19,10 +19,13 @@ if (signupForm) {
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
-
+        const confirmPassword =document.getElementById("confirm-password").value;
         const message = document.getElementById("signup-message");
         const button = signupForm.querySelector('button[type="submit"]');
-
+        if (password !== confirmPassword) {
+            message.textContent = "Passwords do not match.";
+            return;
+        }
         message.textContent = "";
 
         button.disabled = true;
@@ -38,10 +41,12 @@ if (signupForm) {
                 options: {
                     data: {
                         full_name: name
-                    }
-                }
+                    },
+                    emailRedirectTo:
+                        "https://sreehari-ms811.github.io/Task-Tracker/index.html"
+                 }
 
-            });
+});
 
             if (error) throw error;
 
